@@ -93,7 +93,6 @@
 prefix=/usr/local
 # The environment variable I_MPI_ROOT may be used to override installation folder path
 if [ -n "$I_MPI_ROOT" ] ; then
-    echo using MPI_ROOT $I_MPI_ROOT
     prefix=$I_MPI_ROOT;
 fi
 exec_prefix=__EXEC_PREFIX_TO_BE_FILLED_AT_INSTALL_TIME__
@@ -491,40 +490,8 @@ if [ $# -eq 0 ] ; then
     "$0" -help
     exit 1
 fi
-MPILIBDIR_MT="mt"
-if [ -n "$mpilib_override" ] ; then
-    case "$mpilib_override" in
-       opt )
-           MPILIBDIR="/release"
-           MPILIBDIR_MT=
-           ;;
-       opt_mt )
-           MPILIBDIR="/release"
-           ;;
-       dbg )
-           MPILIBDIR="/debug"
-           MPILIBDIR_MT=
-           ;;
-       dbg_mt )
-           MPILIBDIR="/debug"
-           ;;
-       * )
-           echo "Warning: incorrect library version specified. Automatically selected library will be used."
-           ;;
-    esac
-fi
-
-# -----------------------------------------------------------------------
-case "$MPILIBDIR" in
-    release | /release | debug | /debug)
-    if [ ! -z "$MPILIBDIR_MT" ]; then
-        MPILIBDIR=${MPILIBDIR}_${MPILIBDIR_MT}
-    fi
-    ;;
-    "" )
-    MPILIBDIR=/release
-    ;;
-esac
+MPILIBDIR_MT="/thread"
+MPILIBDIR="/thread"
 if [ "$static_mpi" = yes ] ; then
     if [ "x$fortran_binding" = "x" ]; then
         mpilibs="${libdir}/libmpifort.a ${libdir}${MPILIBDIR}/lib${MPILIBNAME}.a"
@@ -539,11 +506,7 @@ if [ "$static_mpi" = yes ] ; then
     strip_debug_info=yes
     fi
 else
-    if [ "x$fortran_binding" = "x" ]; then
-        mpilibs="-lmpifort -l$MPILIBNAME"
-    else
-        mpilibs="-l$MPILIBNAME"
-    fi
+    mpilibs="-l$MPILIBNAME"
     I_MPI_OTHERLIBS=" -lrt -lpthread "
     if [ "$ilp64" = yes ]; then
     mpilibs="-lmpi_ilp64 $mpilibs"
