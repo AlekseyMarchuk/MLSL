@@ -504,11 +504,7 @@ if [ "$static_mpi" = yes ] ; then
     strip_debug_info=yes
     fi
 else
-    if [ "x$fortran_binding" = "x" ]; then
-        mpilibs="-lmpifort -l$MPILIBNAME"
-    else
-        mpilibs="-l$MPILIBNAME"
-    fi
+    mpilibs="-l$MPILIBNAME"
     I_MPI_OTHERLIBS=" -lrt -lpthread "
     if [ "$ilp64" = yes ]; then
     mpilibs="-lmpi_ilp64 $mpilibs"
